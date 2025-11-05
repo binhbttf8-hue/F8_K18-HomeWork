@@ -1,0 +1,15 @@
+p {
+    color: red;
+}
+
+.note {
+    color: blue;
+}
+
+div span {
+    color: green;
+}
+
+section em {
+    color: purple;
+}

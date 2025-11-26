@@ -2,9 +2,25 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Trang gui form</title>
 </head>
 <body>
-
+    <form action="https://api-gateway.fullstack.edu.vn/action_page.php" method="post">
+    <label for="fullname">Ho va ten</label>
+        <input type="text" name="fullname" placeholder="Nhap ho va ten" value="Nguyen Van A" id="fullname">
+    <label for="email">Email</label>
+        <input type="email" name="email" placeholder="Nhap email" value="...@gmail.com" id="email">
+    <label for="password">Mat khau</label>
+        <input type="password" name="password" placeholder="Nhap mat khau" value="123456" id="password">
+    <label>Tuoi</label>
+        <input type="number" name="age" placeholder="Nhap tuoi" value="0">
+        
+    <p>Danh muc</p>
+    <select name="category">
+        <option>HTML</option>
+        <option value="css">CSS</option>
+        <option value="js">JS</option>
+    </select>    
+    </form>
 </body>
 </html>

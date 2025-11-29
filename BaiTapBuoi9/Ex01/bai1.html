@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dung trung tam cau hinh giao dien</title>
+    <style>
+        h1 {
+            background-color: orange;
+            color: white;
+        }
+        input[id="light"]:checked + label {
+            background-color: #fff8cc;
+            color: #8b5e00;
+        }
+
+        input[id="light"]:checked ~ .themelight {
+            background-color: #fff8cc;
+        }
+        input[id="dark"]:checked + label {
+            background-color: #111827;
+            color: #f9fafb;
+        }
+
+        input[id="dark"]:checked ~ .themedark {
+            background-color: #111827;
+            color: white;
+        }
+
+        input[id="Red"]:checked + label {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+
+        input[id="Red"]:checked ~ .Red {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+
+        input[id="Blue"]:checked + label {
+            background-color: #dbeafe;
+            color: #1d4ed8;
+        }
+
+        input[id="Blue"]:checked ~ .Blue {
+            background-color: #dbeafe;
+        }
+
+        input[id="Green"]:checked + label {
+            background-color: #dcfce7;
+            color: #166534;
+        }
+
+        input[id="Green"]:checked ~ .Green {
+            background-color: #dcfce7;
+        }
+
+        input[id="VI"]:checked ~ .VI {
+            background-color: #bbf7d0;
+            color: #166534;
+        }
+
+        input[id="EN"]:checked ~ .EN {
+            background-color: #bfdbfe;
+            color: #1d4ed8;
+        }
+
+        input[id="NC"]:checked ~ .NC {
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+
+        input[id="EC"]:checked ~ .EC {
+            background-color: #bbf7d0;
+            color: #15803d;
+        }
+
+        input[id="QT"]:checked ~ .QT {
+            background-color: #fee2e2;
+            color: #b91c1c;
+        }
+    </style>
+</head>
+<body>
+    <h1>Trung tâm cấu hình giao diện (Demo)</h1>
+    <p>Chọn giao diện (Theme):</p>
+    <input type="radio" name="theme" id="light">
+    <label for="light">Light</label>
+    <input type="radio" name="theme" id="dark">
+    <label for="Dark">Dark</label>
+    <p>Chọn màu chủ đạo (Color):</p>
+    <input type="radio" name="theme" id="Red">
+    <label for="Red">Red</label>
+    <input type="radio" name="theme" id="Blue">
+    <label for="Blue">Blue</label>
+    <input type="radio" name="theme" id="Green">
+    <label for="Green">Green</label>
+    <p>Chọn ngôn ngữ</p>
+    <input type="radio" name="theme" id="VI">
+    <label for="VI">VI</label>
+    <input type="radio" name="theme" id="EN">
+    <label for="EN">EN</label>
+    <p>Tùy chọn bổ sung (Options - Checkbox):</p>
+    <input type="checkbox" name="theme" id="NC">
+    <label for="NC">Hiển thị mô tả nâng cao</label>
+    <input type="checkbox" name="theme" id="EC">
+    <label for="EC">Bật chế độ Eco</label>
+    <input type="checkbox" name="theme" id="QT">
+    <label for="QT">Hiển thị cảnh báo quan trọng</label>
+
+    <p class="themelight">Theme Light: Giao diện sáng, chữ đen.</p>
+    <p class="themedark">Theme Dark: Giao diện tối, chữ sáng.</p>
+    <p class="Red">Màu Red: được nhấn mạnh khi chọn Red.</p>
+    <p class="Blue">Màu Blue: được nhấn mạnh khi chọn Blue.</p>
+    <p class="Green">Màu Green: được nhấn mạnh khi chọn Green.</p>
+    <p class="VI">[VI] Xin chào bạn! Khi chọn VI, dòng này rõ hơn.</p>
+    <p class="EN">[EN] Hello, world! Khi chọn EN, đòng này rõ hơn.</p>
+    <p class="NC">Mô tả nâng cao: giải thích kỹ hơn về cách các lựa chọn đang ảnh hưởng giao diện.</p>
+    <p class="EC">Chế độ Eco: mô phòng trạng thái tiết kiệm tài nguyên cho giao diện.</p>
+    <p class="QT">Cảnh báo quan trọng: khu vực dùng để nhấn mạnh thông tin hệ thống.</p>
+</body>
+</html>

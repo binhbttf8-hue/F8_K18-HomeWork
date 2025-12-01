@@ -1,0 +1,95 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body {
+    font-family: Arial, sans-serif;
+}
+.landing-page {
+    background-image: url(https://images.unsplash.com/photo-1579547621706-1a9c79d5c9f1?q=80&w=2070&auto=format&fit=crop);
+    width: 100vw;
+    height: 90vh;
+    padding: 2rem;
+}
+.content {
+    background-color: rgba(255, 255, 255, 0.4);
+    border-radius: 1.5rem;
+    padding: 2rem;
+    text-align: center;
+}
+.title {
+    text-align: center;
+    font-size: 2.5rem;
+}
+.sub-title {
+    font-weight: bold;
+    color: #c084fc;
+}
+.description {
+    margin-top: 1.5rem;
+}
+.button {
+    margin-top: 2rem;
+    margin-bottom: 4rem;
+    border: none;
+    outline: none;
+    padding: 1rem 2.5rem;
+    background-color: #9141dd;
+    color: white;
+    font-weight: bold;
+    border-radius: 2rem;
+}
+.button:hover {
+    cursor: pointer;
+    background-color: #5b07ac;
+}
+.ok {
+    border-radius: 100rem;
+    border: 0.2rem solid rgba(200, 141, 239, 0.78);
+    width: 3rem;
+    height: 3rem;
+    margin-bottom: 1rem;
+}
+.number {
+    color: #9141dd;
+}
+.description-logo {
+    margin-bottom: 2rem;
+}
+#check {
+    margin-bottom: 2rem;
+}
+.advice {
+    padding: 1rem;
+    background-color: rgba(255, 255, 255, 0.4);
+    border-radius: 1rem;
+    margin-bottom: 2rem;
+}
+.advice-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+}
+.advice-text {
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+.check {
+    width: 1rem;
+    height: 1rem;
+}
+.benefit span {
+    margin-left: 1rem;
+}
+.footer {
+    border-top: 1px solid #b48def;
+    text-align: center;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    padding-bottom: 0.5rem;
+}
+#check:checked ~ .advice {
+    background-color: #b686ea;
+    color: #661fa6;
+}

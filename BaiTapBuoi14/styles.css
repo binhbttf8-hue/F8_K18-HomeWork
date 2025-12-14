@@ -1,0 +1,97 @@
+.header {
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    height: 65px;
+    border-bottom: 1px solid #ededed;
+
+}
+.menu {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    list-style: none;
+}
+.menu-item a {
+    text-decoration: none;
+}
+.arrow-bottom {
+    font-size: 0.5rem;
+    margin-left: 0.5rem;
+}
+.logo {
+    margin-left: 30px;
+}
+.menu-item a {
+    color: #333335;
+    font-weight: bold;
+}
+.menu-item a:hover {
+    cursor: pointer;
+    color: #e13636;
+}
+.menu-item:hover .sub-menu {
+    display: block;
+}
+.menu-item {
+    padding: 0.5rem;
+    position: relative;
+}
+
+.menu-item:hover > a {
+    border-bottom: 2px solid #e13636;
+    padding-bottom: 0.4rem;
+    color: #e13636;
+}
+.sub-menu {
+    background-color: #ffffff;
+    left: 0;
+    border: 1px solid #ededed;
+    margin: 0.5rem;
+    list-style: none;
+    width: 150px;
+    display: none;
+    position: absolute;
+    padding: 0;
+}
+.sub-menu a {
+    font-size: 0.7rem;
+}
+.sub-menu li {
+    padding: 0.5rem;
+}
+.sub-menu li:hover {
+    background-color: #f5f5f5;
+    padding: 0.5rem;
+}
+.sub-menu li:hover > a{
+    color: #e13636;
+}
+
+.arrow-right {
+    font-size: 0.4rem;
+    margin-left: 0.5rem;
+}
+.sub-menu-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+}
+.sub-menu2 {
+    position: absolute;
+    background-color: #ffffff;
+    left: 100%;
+    top: 0;
+    border: 1px solid #ededed;
+    list-style: none;
+    width: 150px;
+    padding: 0;
+    display: none;
+}
+.sub-menu2 li:hover > a {
+    color: #e13636;
+}
+.sub-menu-item:hover .sub-menu2 {
+    display: block;
+}

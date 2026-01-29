@@ -85,4 +85,21 @@ console.log("Value:", str3);
 console.log("Type:", typeof str3);
 
 
+// Part 5: Truthy / Falsy (tu duy logic)
 
+console.log("Boolean(0):", Boolean(0)); //falsy
+console.log("Boolean(1):", Boolean(1));  //truthy
+console.log('Boolean(""):', Boolean(""));  //falsy
+console.log('Boolean("hello"):', Boolean("hello")); //truthy
+console.log("Boolean(null):", Boolean(null));  // falsy
+console.log("Boolean([]):", Boolean([])); //truthy
+
+// Part 6: Array & bo nho (lien he so do RAM)
+const numbers = [4,3,1,5,1]
+
+console.log("First element:", numbers[0]);
+console.log("Last element:", numbers[numbers.length - 1]);
+
+// Vì sao gán const a = numbers thì a và numbers lại liên quan đến cùng 1 vùng nhớ?
+// Trả lời: Vì Array lưu địa chỉ, không lưu giá trị.
+// const a = numbers; copy địa chỉ -> cùng trỏ 1 chỗ -> sửa 1 chỗ là sửa cả 2

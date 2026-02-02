@@ -27,7 +27,7 @@ Why was "An" in classA changed even though we only modified classB?
 
 Example:
   classA -> Memory Address 0x01 -> ["An", "Binh", "Chi"]
-  classB -> Memory Address 0x01 -> (same location)
+  classB -> Memory Address 0x01 -> (same location).
 
 - When we change classB[0] = "An Updated"
 - We are modifying the data at memory address 0x01

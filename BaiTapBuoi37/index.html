@@ -1,0 +1,391 @@
+<!doctype html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BaiTapBuoi37 – LocalStorage &amp; SessionStorage</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #0f0f13;
+      color: #e2e8f0;
+      min-height: 100vh;
+      padding: 32px 24px;
+    }
+
+    h2.section-title {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #6366f1;
+      margin-bottom: 8px;
+    }
+
+    h3.card-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #f1f5f9;
+      margin-bottom: 14px;
+    }
+
+    .page-header {
+      text-align: center;
+      margin-bottom: 36px;
+    }
+
+    .page-header h1 {
+      font-size: 28px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #6366f1, #a78bfa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .page-header p {
+      color: #64748b;
+      margin-top: 6px;
+      font-size: 14px;
+    }
+
+    .grid-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    /* Task 3 spans both columns */
+    .task3-wrapper {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .card {
+      background: #1a1a24;
+      border: 1px solid #2d2d3d;
+      border-radius: 16px;
+      padding: 24px;
+    }
+
+    /* ── Task 1 ── */
+    .input-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    #input-name {
+      flex: 1;
+      background: #0f0f13;
+      border: 1px solid #2d2d3d;
+      border-radius: 8px;
+      padding: 8px 14px;
+      color: #e2e8f0;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    #input-name:focus {
+      border-color: #6366f1;
+    }
+
+    .btn {
+      padding: 8px 18px;
+      border: none;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.1s;
+    }
+
+    .btn:active {
+      transform: scale(0.96);
+    }
+
+    .btn-primary {
+      background: #6366f1;
+      color: #fff;
+    }
+
+    .btn-secondary {
+      background: #334155;
+      color: #e2e8f0;
+    }
+
+    .btn-danger {
+      background: #ef4444;
+      color: #fff;
+    }
+
+    .btn:hover {
+      opacity: 0.85;
+    }
+
+    #read-name {
+      margin-top: 14px;
+      font-size: 14px;
+      color: #a78bfa;
+      min-height: 20px;
+    }
+
+    /* ── Task 2 ── */
+    #heading {
+      font-size: 15px;
+      color: #f1f5f9;
+      margin-bottom: 14px;
+      line-height: 1.6;
+    }
+
+    /* ── Task 3 – Products ── */
+    .task3-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .cart-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: #6366f1;
+      color: #fff;
+      border: none;
+      border-radius: 20px;
+      padding: 6px 14px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    .cart-badge:hover {
+      opacity: 0.85;
+    }
+
+    #product-list {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .product-card {
+      background: #0f0f13;
+      border: 1px solid #2d2d3d;
+      border-radius: 12px;
+      overflow: hidden;
+      transition: border-color 0.2s;
+    }
+
+    .product-card:hover {
+      border-color: #6366f1;
+    }
+
+    .product-card img {
+      width: 100%;
+      height: 90px;
+      object-fit: cover;
+    }
+
+    .product-info {
+      padding: 10px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .product-info p {
+      font-size: 13px;
+      color: #94a3b8;
+    }
+
+    .product-info .product-name {
+      color: #e2e8f0;
+      font-weight: 500;
+      margin-bottom: 2px;
+    }
+
+    .product-info .product-price {
+      color: #6366f1;
+      font-weight: 600;
+    }
+
+    .add-cart-btn {
+      background: none;
+      border: 1px solid #6366f1;
+      color: #6366f1;
+      border-radius: 8px;
+      padding: 6px 10px;
+      cursor: pointer;
+      font-size: 18px;
+      transition: background 0.2s, color 0.2s;
+      flex-shrink: 0;
+    }
+
+    .add-cart-btn:hover {
+      background: #6366f1;
+      color: #fff;
+    }
+
+    /* ── Task 3 – Cart ── */
+    .cart-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    #product-cart {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .cart-item {
+      background: #0f0f13;
+      border: 1px solid #2d2d3d;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .cart-item img {
+      width: 100%;
+      height: 80px;
+      object-fit: cover;
+    }
+
+    .cart-item-info {
+      padding: 8px 12px;
+      font-size: 13px;
+      color: #94a3b8;
+    }
+
+    .cart-item-info .item-name {
+      color: #e2e8f0;
+      font-weight: 500;
+    }
+
+    .cart-item-info .item-qty {
+      color: #a78bfa;
+      margin-top: 2px;
+    }
+
+    .empty-msg {
+      color: #475569;
+      font-size: 13px;
+      text-align: center;
+      padding: 20px 0;
+      grid-column: 1 / -1;
+    }
+
+    /* fly-away animation for delete button */
+    .icon-fly-away {
+      display: inline-block;
+      transform: translateX(80px);
+      opacity: 0;
+      transition: all 0.8s ease-in-out;
+    }
+
+    @keyframes popIn {
+      0% {
+        transform: scale(0);
+        opacity: 0;
+      }
+
+      100% {
+        transform: scale(1.2);
+        opacity: 1;
+      }
+    }
+
+    .x-mark {
+      animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+      display: inline-block;
+      color: #ef4444;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page-header">
+    <h1>BaiTapBuoi37</h1>
+    <p>LocalStorage · SessionStorage · Temporary Shopping Cart</p>
+  </div>
+
+  <div class="grid-layout">
+
+    <!-- Task 1 -->
+    <div class="card">
+      <h2 class="section-title">Task 1</h2>
+      <h3 class="card-title">Save and Read Username</h3>
+      <div class="input-row">
+        <input id="input-name" type="text" placeholder="Enter your name..." autocomplete="off" />
+        <button id="save-btn" class="btn btn-primary">Save</button>
+        <button id="read-btn" class="btn btn-secondary">Read</button>
+      </div>
+      <p id="read-name"></p>
+    </div>
+
+    <!-- Task 2 -->
+    <div class="card">
+      <h2 class="section-title">Task 2</h2>
+      <h3 class="card-title">Count Page Visits</h3>
+      <h1 id="heading"></h1>
+      <button id="reset-btn" class="btn btn-danger">Reset</button>
+    </div>
+
+    <!-- Task 3 -->
+    <div class="task3-wrapper">
+
+      <!-- Products -->
+      <div class="card">
+        <div class="task3-header">
+          <div>
+            <h2 class="section-title">Task 3</h2>
+            <h3 class="card-title" style="margin-bottom:0">Products</h3>
+          </div>
+          <button id="cart-list" class="cart-badge">
+            🛒 <span id="cart-count">0</span>
+          </button>
+        </div>
+        <div id="product-list"></div>
+      </div>
+
+      <!-- Cart -->
+      <div class="card">
+        <div class="cart-actions">
+          <div>
+            <h2 class="section-title">Task 3</h2>
+            <h3 class="card-title" style="margin-bottom:0">Shopping Cart</h3>
+          </div>
+          <button id="delete-cart" class="btn btn-danger">
+            Clear <i>🗑</i>
+          </button>
+        </div>
+        <div id="product-cart">
+          <p class="empty-msg">Cart is empty</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="./main.js"></script>
+</body>
+
+</html>

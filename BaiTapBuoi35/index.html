@@ -1,0 +1,722 @@
+<!doctype html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bài tập: Form Validation với Zod</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+            href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap"
+            rel="stylesheet"
+    />
+
+    <!-- ============================================================
+📦 THƯ VIỆN ZOD — học viên dùng biến toàn cục: window.Zod
+   Ví dụ: const { z } = window.Zod;
+============================================================ -->
+    <script src="https://cdn.jsdelivr.net/npm/zod@3.22.4/lib/index.umd.min.js"></script>
+    <style>
+        * {
+            font-family: "DM Sans", sans-serif;
+            box-sizing: border-box;
+        }
+        h1,
+        h2 {
+            font-family: "DM Serif Display", serif;
+        }
+        body {
+            background-color: #faf6ee;
+            margin: 0;
+        }
+
+        /* ─── Layout ─────────────────────────────────────────────── */
+        .page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 32px 16px;
+        }
+        .card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 2px 24px rgba(0, 0, 0, 0.07);
+            border: 1px solid #e8dfc8;
+            padding: 40px;
+            width: 100%;
+            max-width: 480px;
+            animation: slideIn 0.45s ease both;
+        }
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ─── Fields ─────────────────────────────────────────────── */
+        .field {
+            margin-bottom: 20px;
+        }
+        .field label {
+            display: block;
+            font-size: 13.5px;
+            font-weight: 600;
+            color: #4a3a1a;
+            margin-bottom: 6px;
+        }
+        .field label .opt {
+            font-weight: 400;
+            color: #a07940;
+            font-size: 12px;
+            margin-left: 4px;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 11px 14px;
+            font-size: 14.5px;
+            color: #1a1208;
+            background: white;
+            border: 2px solid #e5d9c3;
+            border-radius: 8px;
+            outline: none;
+            transition:
+                    border-color 0.2s,
+                    box-shadow 0.2s;
+            appearance: none;
+        }
+        .input-field:focus {
+            border-color: #d97706;
+            box-shadow: 0 0 0 4px rgba(217, 119, 6, 0.12);
+        }
+
+        /* ─── States (học viên toggle các class này) ─────────────── */
+        .input-field.is-error {
+            border-color: #dc2626;
+            box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.1);
+            animation: shake 0.35s ease;
+        }
+        .input-field.is-success {
+            border-color: #16a34a;
+        }
+
+        @keyframes shake {
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+            20%,
+            60% {
+                transform: translateX(-5px);
+            }
+            40%,
+            80% {
+                transform: translateX(5px);
+            }
+        }
+
+        /* ─── Error message (học viên toggle class "show") ────────── */
+        .error-msg {
+            display: none;
+            align-items: center;
+            gap: 5px;
+            color: #dc2626;
+            font-size: 12.5px;
+            font-weight: 500;
+            margin-top: 6px;
+            animation: fadeUp 0.2s ease;
+        }
+        .error-msg.show {
+            display: flex;
+        }
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(5px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ─── Password wrapper ───────────────────────────────────── */
+        .pw-wrap {
+            position: relative;
+        }
+        .pw-wrap .toggle-pw {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            color: #a07940;
+            padding: 2px;
+        }
+        .pw-wrap .input-field {
+            padding-right: 40px;
+        }
+
+        /* ─── Password strength ──────────────────────────────────── */
+        .strength-bars {
+            display: flex;
+            gap: 4px;
+            margin-top: 8px;
+        }
+        .strength-bar {
+            flex: 1;
+            height: 4px;
+            border-radius: 99px;
+            background: #e5d9c3;
+            transition: background 0.35s;
+        }
+        /* Học viên set data-level="1|2|3|4" trên #strengthBars để đổi màu */
+        .strength-bars[data-level="1"] .strength-bar:nth-child(-n + 1) {
+            background: #ef4444;
+        }
+        .strength-bars[data-level="2"] .strength-bar:nth-child(-n + 2) {
+            background: #f97316;
+        }
+        .strength-bars[data-level="3"] .strength-bar:nth-child(-n + 3) {
+            background: #eab308;
+        }
+        .strength-bars[data-level="4"] .strength-bar:nth-child(-n + 4) {
+            background: #16a34a;
+        }
+        #strengthLabel {
+            font-size: 11.5px;
+            color: #a07940;
+            margin-top: 4px;
+        }
+
+        /* ─── Select arrow ───────────────────────────────────────── */
+        select.input-field {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='%23a07940' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 13px center;
+        }
+
+        /* ─── Checkbox row ───────────────────────────────────────── */
+        .check-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        .check-row input[type="checkbox"] {
+            margin-top: 3px;
+            width: 15px;
+            height: 15px;
+            accent-color: #d97706;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+        .check-row label {
+            font-size: 13px;
+            color: #6b5a3a;
+            font-weight: 400;
+            cursor: pointer;
+            line-height: 1.5;
+        }
+        .check-row label a {
+            color: #b45309;
+            font-weight: 600;
+            text-decoration: underline;
+            text-underline-offset: 2px;
+        }
+
+        /* ─── Submit button ──────────────────────────────────────── */
+        .submit-btn {
+            width: 100%;
+            padding: 13px;
+            background: #1a1208;
+            color: #faf6ee;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            letter-spacing: 0.02em;
+            margin-top: 8px;
+            transition:
+                    background 0.2s,
+                    transform 0.15s;
+        }
+        .submit-btn:hover {
+            background: #2d2010;
+            transform: translateY(-1px);
+        }
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+        .submit-btn:disabled {
+            background: #c7b89a;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* ─── Success screen (học viên toggle hidden) ─────────────── */
+        #successScreen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 16px 0;
+            animation: pop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+        }
+        #successScreen.show {
+            display: flex;
+        }
+        @keyframes pop {
+            from {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+            70% {
+                transform: scale(1.04);
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        #successScreen .icon {
+            font-size: 52px;
+            margin-bottom: 12px;
+        }
+        #successScreen h2 {
+            margin: 0 0 8px;
+        }
+        #successScreen p {
+            color: #7a6a4a;
+            font-size: 14px;
+            margin: 0 0 20px;
+        }
+
+        /* ─── Divider ─────────────────────────────────────────────── */
+        .divider {
+            border: none;
+            border-top: 1px solid #f0e8d4;
+            margin: 24px 0;
+        }
+
+        /* ─── TODO badge (chỉ dùng để hướng dẫn) ────────────────── */
+        .todo-badge {
+            display: inline-block;
+            background: #fef3c7;
+            color: #92400e;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 2px 7px;
+            border-radius: 4px;
+            letter-spacing: 0.04em;
+            margin-left: 6px;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+
+<body>
+<div class="page">
+    <div style="width: 100%; max-width: 480px">
+        <!-- Header -->
+        <div
+                style="
+                        text-align: center;
+                        margin-bottom: 28px;
+                        animation: slideIn 0.4s ease both;
+                    "
+        >
+                    <span
+                            style="
+                            display: inline-block;
+                            background: #fef3c7;
+                            color: #b45309;
+                            font-size: 11px;
+                            font-weight: 700;
+                            padding: 3px 10px;
+                            border-radius: 99px;
+                            letter-spacing: 0.08em;
+                            text-transform: uppercase;
+                            margin-bottom: 12px;
+                        "
+                    >
+                        ✦ Bài tập thực hành
+                    </span>
+            <h1
+                    style="
+                            font-size: 2.2rem;
+                            color: #1a1208;
+                            margin: 0;
+                            line-height: 1.2;
+                        "
+            >
+                Form Validation<br />với Zod
+            </h1>
+            <p
+                    style="
+                            color: #7a6a4a;
+                            font-size: 14px;
+                            margin-top: 10px;
+                        "
+            >
+                HTML &amp; CSS đã sẵn sàng — nhiệm vụ của bạn là viết
+                phần JavaScript
+            </p>
+        </div>
+
+        <!-- Card -->
+        <div class="card">
+            <!-- ══════════════════════════════════════════════════════
+   FORM — học viên KHÔNG được sửa HTML/CSS bên dưới
+══════════════════════════════════════════════════════ -->
+            <form id="registerForm" novalidate>
+                <!-- Họ & Tên -->
+                <div
+                        style="
+                                display: grid;
+                                grid-template-columns: 1fr 1fr;
+                                gap: 14px;
+                            "
+                >
+                    <div class="field">
+                        <label for="firstName">Họ</label>
+                        <input
+                                type="text"
+                                id="firstName"
+                                class="input-field"
+                                placeholder="Nguyễn"
+                        />
+                        <p class="error-msg" id="firstNameError"></p>
+                    </div>
+                    <div class="field">
+                        <label for="lastName">Tên</label>
+                        <input
+                                type="text"
+                                id="lastName"
+                                class="input-field"
+                                placeholder="Văn A"
+                        />
+                        <p class="error-msg" id="lastNameError"></p>
+                    </div>
+                </div>
+
+                <!-- Email -->
+                <div class="field">
+                    <label for="email">Email</label>
+                    <input
+                            type="email"
+                            id="email"
+                            class="input-field"
+                            placeholder="example@email.com"
+                    />
+                    <p class="error-msg" id="emailError"></p>
+                </div>
+
+                <!-- Số điện thoại -->
+                <div class="field">
+                    <label for="phone"
+                    >Số điện thoại
+                        <span class="opt">(tuỳ chọn)</span></label
+                    >
+                    <input
+                            type="tel"
+                            id="phone"
+                            class="input-field"
+                            placeholder="0912 345 678"
+                    />
+                    <p class="error-msg" id="phoneError"></p>
+                </div>
+
+                <!-- Vai trò -->
+                <div class="field">
+                    <label for="role">Vai trò</label>
+                    <select id="role" class="input-field">
+                        <option value="">-- Chọn vai trò --</option>
+                        <option value="dev">Developer</option>
+                        <option value="design">Designer</option>
+                        <option value="pm">Product Manager</option>
+                        <option value="other">Khác</option>
+                    </select>
+                    <p class="error-msg" id="roleError"></p>
+                </div>
+
+                <!-- Mật khẩu -->
+                <div class="field">
+                    <label for="password">Mật khẩu</label>
+                    <div class="pw-wrap">
+                        <input
+                                type="password"
+                                id="password"
+                                class="input-field"
+                                placeholder="Tối thiểu 8 ký tự"
+                        />
+                        <button
+                                type="button"
+                                class="toggle-pw"
+                                id="togglePassword"
+                        >
+                            👁
+                        </button>
+                    </div>
+                    <p class="error-msg" id="passwordError"></p>
+                    <!-- Thanh độ mạnh -->
+                    <div class="strength-bars" id="strengthBars">
+                        <div class="strength-bar"></div>
+                        <div class="strength-bar"></div>
+                        <div class="strength-bar"></div>
+                        <div class="strength-bar"></div>
+                    </div>
+                    <p id="strengthLabel">Độ mạnh mật khẩu</p>
+                </div>
+
+                <!-- Xác nhận mật khẩu -->
+                <div class="field">
+                    <label for="confirmPassword"
+                    >Xác nhận mật khẩu</label
+                    >
+                    <div class="pw-wrap">
+                        <input
+                                type="password"
+                                id="confirmPassword"
+                                class="input-field"
+                                placeholder="Nhập lại mật khẩu"
+                        />
+                        <button
+                                type="button"
+                                class="toggle-pw"
+                                id="toggleConfirm"
+                        >
+                            👁
+                        </button>
+                    </div>
+                    <p class="error-msg" id="confirmPasswordError"></p>
+                </div>
+
+                <hr class="divider" />
+
+                <!-- Terms -->
+                <div class="field">
+                    <div class="check-row">
+                        <input type="checkbox" id="terms" />
+                        <label for="terms">
+                            Tôi đồng ý với
+                            <a href="#">Điều khoản dịch vụ</a> và
+                            <a href="#">Chính sách bảo mật</a>
+                        </label>
+                    </div>
+                    <p class="error-msg" id="termsError"></p>
+                </div>
+
+                <button type="submit" class="submit-btn" id="submitBtn">
+                    Tạo tài khoản →
+                </button>
+
+                <p
+                        style="
+                                text-align: center;
+                                font-size: 13px;
+                                color: #a09070;
+                                margin-top: 16px;
+                            "
+                >
+                    Đã có tài khoản?
+                    <a
+                            href="#"
+                            style="
+                                    color: #b45309;
+                                    font-weight: 600;
+                                    text-decoration: underline;
+                                    text-underline-offset: 2px;
+                                "
+                    >Đăng nhập</a
+                    >
+                </p>
+            </form>
+
+            <!-- Success (ẩn mặc định) -->
+            <div id="successScreen">
+                <div class="icon">🎉</div>
+                <h2>Đăng ký thành công!</h2>
+                <p>Hãy kiểm tra email để xác minh tài khoản.</p>
+                <button
+                        class="submit-btn"
+                        id="resetBtn"
+                        style="max-width: 180px"
+                >
+                    ← Quay lại
+                </button>
+            </div>
+        </div>
+        <!-- /card -->
+
+        <!-- ══════════════════════════════════════════════════════════
+ 📋 HƯỚNG DẪN BÀI TẬP
+══════════════════════════════════════════════════════════ -->
+        <div
+                style="
+                        margin-top: 28px;
+                        background: #fffbeb;
+                        border: 1.5px solid #fde68a;
+                        border-radius: 14px;
+                        padding: 24px;
+                        font-size: 13.5px;
+                        color: #4a3a1a;
+                        line-height: 1.7;
+                    "
+        >
+            <p
+                    style="
+                            font-weight: 700;
+                            font-size: 15px;
+                            margin: 0 0 14px;
+                        "
+            >
+                Yêu cầu bài tập
+            </p>
+
+            <p style="margin: 0 0 8px">
+                <strong>Mục tiêu:</strong> Viết toàn bộ logic JavaScript
+                vào thẻ <code>&lt;script&gt;</code> cuối file. Không
+                được thay đổi HTML/CSS.
+            </p>
+
+            <p style="margin: 12px 0 6px; font-weight: 600">
+                1. Định nghĩa Schema với Zod
+                <span class="todo-badge">TODO 1</span>
+            </p>
+            <p style="margin: 0 0 4px">
+                Tạo <code>registerSchema</code> dùng
+                <code>z.object({})</code> với các rule sau:
+            </p>
+            <ul style="margin: 4px 0 0 18px; padding: 0">
+                <li>
+                    <code>firstName</code> — bắt buộc, tối thiểu 2 ký tự
+                </li>
+                <li>
+                    <code>lastName</code> — bắt buộc, tối thiểu 2 ký tự
+                </li>
+                <li>
+                    <code>email</code> — bắt buộc, đúng định dạng email
+                </li>
+                <li>
+                    <code>phone</code> — tuỳ chọn, nếu có phải đúng định
+                    dạng <code>0XXXXXXXXX</code> (10 chữ số)
+                </li>
+                <li>
+                    <code>role</code> — bắt buộc, phải là một trong:
+                    <code>dev | design | pm | other</code>
+                </li>
+                <li>
+                    <code>password</code> — bắt buộc, ≥ 8 ký tự, có ít
+                    nhất 1 chữ cái và 1 chữ số
+                </li>
+                <li><code>confirmPassword</code> — bắt buộc</li>
+                <li><code>terms</code> — phải là <code>true</code></li>
+            </ul>
+            <p style="margin: 6px 0 0">
+                Dùng <code>.superRefine()</code> hoặc
+                <code>.refine()</code> để kiểm tra
+                <code>confirmPassword === password</code>.
+            </p>
+
+            <p style="margin: 14px 0 6px; font-weight: 600">
+                2. Hàm hiển thị lỗi / thành công
+                <span class="todo-badge">TODO 2</span>
+            </p>
+            <p style="margin: 0">
+                Viết hàm
+                <code>showError(fieldId, errorMsgId, message)</code> và
+                <code>showSuccess(fieldId)</code>:
+            </p>
+            <ul style="margin: 4px 0 0 18px; padding: 0">
+                <li>
+                    Thêm / xoá class <code>is-error</code> và
+                    <code>is-success</code> trên
+                    <code>.input-field</code>
+                </li>
+                <li>
+                    Thêm / xoá class <code>show</code> trên
+                    <code>.error-msg</code> và set
+                    <code>textContent</code>
+                </li>
+            </ul>
+
+            <p style="margin: 14px 0 6px; font-weight: 600">
+                3. Xử lý sự kiện submit
+                <span class="todo-badge">TODO 3</span>
+            </p>
+            <ul style="margin: 0 0 0 18px; padding: 0">
+                <li>Lấy giá trị từ tất cả các field</li>
+                <li>
+                    Parse bằng
+                    <code>registerSchema.safeParse(data)</code>
+                </li>
+                <li>
+                    Nếu lỗi: map
+                    <code>error.flatten().fieldErrors</code> → gọi
+                    <code>showError()</code> cho từng field
+                </li>
+                <li>
+                    Nếu thành công: ẩn form, hiện
+                    <code>#successScreen</code> (thêm class
+                    <code>show</code>)
+                </li>
+            </ul>
+
+            <p style="margin: 14px 0 6px; font-weight: 600">
+                4. Validation real-time khi blur
+                <span class="todo-badge">TODO 4</span>
+            </p>
+            <p style="margin: 0">
+                Với mỗi <code>input / select</code>, lắng nghe sự kiện
+                <code>blur</code> và validate field đó ngay lập tức.
+            </p>
+
+            <p style="margin: 14px 0 6px; font-weight: 600">
+                5. Toggle hiển thị mật khẩu
+                <span class="todo-badge">TODO 5</span>
+            </p>
+            <p style="margin: 0">
+                Nút <code>#togglePassword</code> và
+                <code>#toggleConfirm</code> đổi <code>type</code> giữa
+                <code>password ↔ text</code> và đổi icon 👁 / 🙈.
+            </p>
+
+            <p style="margin: 14px 0 6px; font-weight: 600">
+                6. Thanh độ mạnh mật khẩu
+                <span class="todo-badge">TODO 6</span>
+            </p>
+            <p style="margin: 0">
+                Khi người dùng gõ vào <code>#password</code>, tính điểm
+                (1–4) theo tiêu chí: độ dài ≥ 8, có chữ hoa, có số, có
+                ký tự đặc biệt. Set <code>data-level="N"</code> trên
+                <code>#strengthBars</code> và cập nhật
+                <code>#strengthLabel</code>.
+            </p>
+
+            <p style="margin: 14px 0 6px; font-weight: 600">
+                7. Nút Reset <span class="todo-badge">TODO 7</span>
+            </p>
+            <p style="margin: 0">
+                Khi click <code>#resetBtn</code>: reset form, xoá tất cả
+                class lỗi/thành công, ẩn <code>#successScreen</code>,
+                hiện lại form.
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- ================================================================
+✏️  KHU VỰC CỦA HỌC VIÊN — Viết toàn bộ JavaScript tại đây
+================================================================ -->
+<script src="main.js" defer></script>
+</body>
+</html>

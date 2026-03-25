@@ -21,6 +21,7 @@ const registerSchema = z
         role: z.enum(["dev", "design", "pm", "other"], {
             errorMap: () => ({ message: "Vui lòng chọn vai trò" }),
         }),
+
         password: z
             .string()
             .min(8, "Mật khẩu phải có ít nhất 8 ký tự")

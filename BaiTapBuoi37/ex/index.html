@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Homework exercise 37</title>
+    <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+    />
+    <style>
+        /* hiệu ứng nhờ AI code */
+        .icon-fly-away {
+            transform: translateX(100px);
+            opacity: 0;
+            transition: all 1s ease-in-out;
+            display: inline-block;
+        }
+
+        .x-mark {
+            margin-left: 155px;
+            color: #ff4d4d;
+            font-weight: bold;
+            display: inline-block;
+            animation: popIn 1s cubic-bezier(0.175, 0.885, 0.32, 1.275)
+            forwards;
+        }
+
+        @keyframes popIn {
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+            100% {
+                transform: scale(1.2);
+                opacity: 1;
+            }
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+<body class="p-10">
+<div class="grid grid-cols-2 gap-4">
+    <div class="border rounded-xl p-2 mx-auto">
+        <p>Task 1: Save and read user.</p>
+        <div class="flex gap-4 mt-2.5">
+            <input
+                    id="input-name"
+                    type="text"
+                    placeholder="Enter username..."
+                    class="border rounded px-2"
+                    autocomplete="off"
+            />
+            <div>
+                <button
+                        id="save-btn"
+                        class="rounded-sm p-1 bg-[green] text-white"
+                >
+                    Save
+                </button>
+                <button
+                        id="read-btn"
+                        class="rounded-sm p-1 bg-[green] text-white ml-4"
+                >
+                    Read
+                </button>
+            </div>
+        </div>
+        <p id="read-name" class="mt-4"></p>
+    </div>
+    <div class="border rounded-xl p-2 mx-auto">
+        <p>Task 2: Count the number of page visits.</p>
+        <div class="flex gap-4 mt-2.5">
+            <h1 id="heading"></h1>
+            <button
+                    id="reset-btn"
+                    class="rounded-sm p-1 bg-[green] text-white"
+            >
+                Reset
+            </button>
+        </div>
+    </div>
+    <div class="border rounded-xl p-2">
+        <div class="flex justify-around items-center">
+            <p>Task 3: Temporary shopping cart</p>
+            <button class="p-2 cursor-pointer" id="cart-list">
+                <i class="fa-solid fa-cart-shopping text-xl"></i>:
+                <span id="cart-count"></span>
+            </button>
+        </div>
+        <div id="product-list" class="grid grid-cols-2 gap-3.75"></div>
+    </div>
+    <div class="border rounded-xl p-2">
+        <div class="flex items-center">
+            <p>Task 3: Product cart</p>
+            <button class="p-2 cursor-pointer ml-10" id="delete-cart">
+                Delete: <i class="fa-solid fa-cart-flatbed text-xl"></i>
+            </button>
+        </div>
+        <div id="product-cart" class="grid grid-cols-2 gap-3.75"></div>
+    </div>
+</div>
+
+<script src="./main.js"></script>
+</body>
+</html>

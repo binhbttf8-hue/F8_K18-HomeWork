@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quản Lý Sản Phẩm | ShopAdmin</title>
+  <link rel="stylesheet" href="../style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+<div class="overlay" id="overlay"></div>
+<div class="container">
+  <aside class="sidebar" id="sidebar">
+    <h2>ShopAdmin</h2>
+    <ul>
+      <li onclick="location.href='../index.html'"><i class="fas fa-home"></i> Tổng quan</li>
+      <li class="active"><i class="fas fa-box"></i> Sản phẩm</li>
+      <li onclick="location.href='../orders/index.html'"><i class="fas fa-shopping-cart"></i> Đơn hàng</li>
+      <li onclick="location.href='../customers/index.html'"><i class="fas fa-users"></i> Khách hàng</li>
+      <li onclick="location.href='../reports/index.html'"><i class="fas fa-chart-line"></i> Báo cáo</li>
+    </ul>
+  </aside>
+
+  <main class="main-content">
+    <header>
+      <button class="menu-btn" onclick="toggleMenu()"><i class="fas fa-bars"></i></button>
+      <div class="search-bar">
+        <input type="text" id="searchInput" placeholder="Tìm tên sản phẩm, mã SKU..." onkeyup="filterProducts()">
+      </div>
+      <div class="user-actions">
+        <a href="create.html" class="btn-add"><i class="fas fa-plus"></i> Thêm sản phẩm</a>
+      </div>
+    </header>
+
+    <section class="stats">
+      <div class="card">
+        <h3>Tổng sản phẩm</h3>
+        <p id="statTotal">0</p>
+      </div>
+      <div class="card">
+        <h3>Sắp hết hàng</h3>
+        <p id="statLowStock" style="color: #e74c3c;">0</p>
+      </div>
+      <div class="card">
+        <h3>Danh mục</h3>
+        <p id="statCategories">0</p>
+      </div>
+    </section>
+
+    <section class="table-container">
+      <div class="table-header">
+        <h3>Danh sách sản phẩm</h3>
+        <div class="filters">
+          <select id="categoryFilter" onchange="filterProducts()">
+            <option value="">Tất cả danh mục</option>
+          </select>
+        </div>
+      </div>
+      <table>
+        <thead>
+        <tr>
+          <th>Hình</th>
+          <th>Thông tin sản phẩm</th>
+          <th>Danh mục</th>
+          <th>Giá bán</th>
+          <th>Tồn kho</th>
+          <th>Thao tác</th>
+        </tr>
+        </thead>
+        <tbody id="productTableBody">
+        </tbody>
+      </table>
+    </section>
+  </main>
+</div>
+
+<script src="../data.js"></script>
+<script>
+  function renderProducts(products) {
+    const tbody = document.getElementById('productTableBody');
+    if (products.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:30px;color:#999;">Không tìm thấy sản phẩm nào</td></tr>';
+      return;
+    }
+    tbody.innerHTML = products.map(p => `
+      <tr>
+        <td>${p.image ? `<img src="${p.image}" alt="${p.name}" class="img-thumb">` : '<div class="img-thumb" style="width:50px;height:50px;background:#eee;border-radius:8px;display:flex;align-items:center;justify-content:center;"><i class="fas fa-image" style="color:#ccc"></i></div>'}</td>
+        <td><strong>${p.name}</strong><br><small>SKU: ${p.sku}</small></td>
+        <td>${p.category}</td>
+        <td>${formatMoney(p.price)}</td>
+        <td class="${p.stock <= 5 ? 'stock-low' : ''}">${p.stock}${p.stock <= 5 ? ' (Cảnh báo)' : ''}</td>
+        <td>
+          <button class="btn-icon edit" onclick="editProduct('${p.id}')" title="Sửa"><i class="fas fa-edit"></i></button>
+          <button class="btn-icon delete" onclick="removeProduct('${p.id}', '${p.name.replace(/'/g, "\\'")}')" title="Xóa"><i class="fas fa-trash"></i></button>
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  function updateStats() {
+    const products = getProducts();
+    document.getElementById('statTotal').textContent = products.length;
+    document.getElementById('statLowStock').textContent = products.filter(p => p.stock <= 5).length;
+    const categories = [...new Set(products.map(p => p.category))];
+    document.getElementById('statCategories').textContent = categories.length;
+
+    // Cập nhật dropdown danh mục
+    const select = document.getElementById('categoryFilter');
+    const currentVal = select.value;
+    select.innerHTML = '<option value="">Tất cả danh mục</option>' +
+      categories.map(c => `<option value="${c}" ${c === currentVal ? 'selected' : ''}>${c}</option>`).join('');
+  }
+
+  function filterProducts() {
+    const keyword = document.getElementById('searchInput').value.toLowerCase();
+    const category = document.getElementById('categoryFilter').value;
+    let products = getProducts();
+
+    if (category) {
+      products = products.filter(p => p.category === category);
+    }
+    if (keyword) {
+      products = products.filter(p =>
+        p.name.toLowerCase().includes(keyword) ||
+        p.sku.toLowerCase().includes(keyword)
+      );
+    }
+    renderProducts(products);
+  }
+
+  function editProduct(id) {
+    location.href = 'create.html?id=' + id;
+  }
+
+  function removeProduct(id, name) {
+    showConfirm('Bạn có chắc muốn xóa sản phẩm "' + name + '"?', function() {
+      deleteProduct(id);
+      updateStats();
+      filterProducts();
+      showToast('Đã xóa sản phẩm thành công!', 'success');
+    });
+  }
+
+  // Mobile menu toggle
+  function toggleMenu() {
+    document.getElementById('sidebar').classList.toggle('active');
+    document.getElementById('overlay').classList.toggle('active');
+  }
+  document.getElementById('overlay').addEventListener('click', toggleMenu);
+
+  // Khởi tạo
+  updateStats();
+  renderProducts(getProducts());
+</script>
+</body>
+</html>

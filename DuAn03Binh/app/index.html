@@ -184,8 +184,8 @@
         <canvas id="revenueChart"></canvas>
       </div>
       <div class="chart-box">
-        <h3><i class="fas fa-chart-pie"></i> Trạng thái đơn hàng</h3>
-        <canvas id="orderStatusChart"></canvas>
+        <h3><i class="fas fa-chart-pie"></i> Cơ cấu sản phẩm</h3>
+        <canvas id="categoryChart"></canvas>
       </div>
     </section>
 
@@ -312,21 +312,22 @@
       }
     });
 
-    // === Order status doughnut chart ===
-    const statusCounts = {
-      pending: orders.filter(o => o.status === 'pending').length,
-      shipping: orders.filter(o => o.status === 'shipping').length,
-      completed: orders.filter(o => o.status === 'completed').length,
-      cancelled: orders.filter(o => o.status === 'cancelled').length
-    };
+    // === Category doughnut chart ===
+    const categoryCount = {};
+    products.forEach(p => {
+      categoryCount[p.category] = (categoryCount[p.category] || 0) + 1;
+    });
+    const catLabels = Object.keys(categoryCount);
+    const catData = Object.values(categoryCount);
+    const catColors = ['#3498db', '#27ae60', '#f39c12', '#e74c3c', '#9b59b6'];
 
-    new Chart(document.getElementById('orderStatusChart').getContext('2d'), {
+    new Chart(document.getElementById('categoryChart').getContext('2d'), {
       type: 'doughnut',
       data: {
-        labels: ['Chờ xử lý', 'Đang giao', 'Hoàn thành', 'Đã hủy'],
+        labels: catLabels,
         datasets: [{
-          data: [statusCounts.pending, statusCounts.shipping, statusCounts.completed, statusCounts.cancelled],
-          backgroundColor: ['#f39c12', '#3498db', '#27ae60', '#e74c3c']
+          data: catData,
+          backgroundColor: catColors.slice(0, catLabels.length)
         }]
       },
       options: {

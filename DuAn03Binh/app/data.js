@@ -77,6 +77,7 @@ function addCustomerData(customer) {
   customer.id = 'CUST-' + String(customers.length + 1).padStart(3, '0');
   customer.orders = customer.orders || 0;
   customer.totalSpent = customer.totalSpent || 0;
+  customer.createdAt = customer.createdAt || new Date().toISOString().split('T')[0];
   customers.push(customer);
   saveCustomers(customers);
   return customer;

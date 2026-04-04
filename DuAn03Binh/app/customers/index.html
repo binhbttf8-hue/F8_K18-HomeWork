@@ -136,12 +136,12 @@
         <p id="statTotal">0</p>
       </div>
       <div class="card">
-        <h3>Tổng chi tiêu</h3>
-        <p id="statSpent">0đ</p>
+        <h3>Khách hàng mới (Tháng)</h3>
+        <p id="statNew" style="color:#27ae60;">0</p>
       </div>
       <div class="card">
-        <h3>Trung bình đơn/khách</h3>
-        <p id="statAvgOrders">0</p>
+        <h3>Tổng chi tiêu</h3>
+        <p id="statSpent">0đ</p>
       </div>
     </section>
 
@@ -222,10 +222,15 @@
   function updateStats() {
     const customers = getCustomers();
     document.getElementById('statTotal').textContent = customers.length;
+
+    // Khách hàng mới trong tháng này
+    const now = new Date();
+    const thisMonth = now.toISOString().slice(0, 7); // YYYY-MM
+    const newThisMonth = customers.filter(c => c.createdAt && c.createdAt.startsWith(thisMonth)).length;
+    document.getElementById('statNew').textContent = newThisMonth;
+
     const totalSpent = customers.reduce((s, c) => s + (c.totalSpent || 0), 0);
     document.getElementById('statSpent').textContent = formatMoney(totalSpent);
-    const avgOrders = customers.length > 0 ? (customers.reduce((s, c) => s + (c.orders || 0), 0) / customers.length).toFixed(1) : 0;
-    document.getElementById('statAvgOrders').textContent = avgOrders;
   }
 
   function renderCustomers(customers) {
